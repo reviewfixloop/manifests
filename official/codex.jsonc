@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "id": "codex",
+  "display": {
+    "name": "Codex",
+    "homepage": "https://developers.openai.com/codex",
+    "usageLimitsUrl": "https://developers.openai.com/codex/pricing",
+  },
+  "command": "codex",
+  "version": { "args": ["--version"], "pattern": "(\\d+\\.\\d+\\.\\d+)" },
+  "models": {
+    "default": "gpt-6.1-sol",
+    // The levels Codex's model catalog lists for the default model.
+    "efforts": ["low", "medium", "high", "xhigh", "max", "ultra"],
+    "defaultEffort": "medium",
+  },
+  "transport": {
+    "type": "jsonl",
+    // No approval prompts and no sandbox of Codex's own: the reviewer has the authority of the
+    // agent the user launches themself. The model and the effort are `-c` overrides, since
+    // `exec resume` takes fewer flags than `exec`. The trailing "-" reads the prompt from
+    // standard input.
+    "args": [
+      "exec",
+      "--json",
+      "--skip-git-repo-check",
+      "--dangerously-bypass-approvals-and-sandbox",
+      { "when": "model", "args": ["-c", "model={{model | toml}}"] },
+      { "when": "effort", "args": ["-c", "model_reasoning_effort={{effort | toml}}"] },
+      "-",
+    ],
+    "resumeArgs": [
+      "exec",
+      "resume",
+      "{{sessionId}}",
+      "--json",
+      "--skip-git-repo-check",
+      "--dangerously-bypass-approvals-and-sandbox",
+      { "when": "model", "args": ["-c", "model={{model | toml}}"] },
+      { "when": "effort", "args": ["-c", "model_reasoning_effort={{effort | toml}}"] },
+      "-",
+    ],
+    "stdin": "{{prompt}}",
+    // A resumed thread reports the thread's running total; cached tokens are part of the input.
+    "usage": { "mode": "cumulative", "inputIncludesCacheRead": true, "inputIncludesCacheWrite": true },
+    "events": [
+      { "match": { "/type": "thread.started" }, "emit": { "type": "session", "id": { "from": "/thread_id" } } },
+      // No `model_call`: `turn.started` appears once per prompt, and no line marks a model request.
+      {
+        "match": { "/type": "item.completed", "/item/type": "agent_message" },
+        "emit": { "type": "progress", "kind": "message", "text": { "from": "/item/text" } },
+      },
+      {
+        "match": { "/type": "item.completed", "/item/type": "reasoning" },
+        "emit": { "type": "progress", "kind": "thought", "text": { "from": "/item/text" } },
+      },
+      {
+        "match": {
+          "/type": "item.started",
+          "/item/type": ["command_execution", "mcp_tool_call", "web_search", "file_change"],
+        },
+        "emit": { "type": "progress", "kind": "tool_start", "text": { "from": "/item/command", "default": "tool" } },
+      },
+      {
+        "match": {
+          "/type": "item.completed",
+          "/item/type": ["command_execution", "mcp_tool_call", "web_search", "file_change"],
+        },
+        "emit": { "type": "progress", "kind": "tool_end" },
+      },
+      {
+        "match": { "/type": "item.completed", "/item/type": "error" },
+        "emit": { "type": "log", "level": "warn", "text": { "from": "/item/message" } },
+      },
+      {
+        "match": { "/type": "turn.completed" },
+        "emit": {
+          "type": "usage",
+          "input": { "from": "/usage/input_tokens" },
+          "output": { "from": "/usage/output_tokens" },
+          "cacheRead": { "from": "/usage/cached_input_tokens" },
+          "cacheWrite": { "from": "/usage/cache_write_input_tokens" },
+          "reasoning": { "from": "/usage/reasoning_output_tokens" },
+        },
+      },
+      { "match": { "/type": "turn.completed" }, "emit": { "type": "turn_end", "status": "completed" } },
+      {
+        "match": { "/type": "turn.failed" },
+        "emit": {
+          "type": "turn_end",
+          "status": "failed",
+          "failureMessage": { "from": "/error/message" },
+          "usageComplete": false,
+        },
+      },
+    ],
+  },
+  "failures": [
+    { "pattern": "(?i)not logged in|401 unauthorized|invalid_api_key|authentication", "kind": "authentication" },
+    { "pattern": "(?i)usage limit|insufficient_quota|quota", "kind": "quota" },
+    { "pattern": "(?i)rate limit|too many requests", "kind": "rate_limit" },
+    { "pattern": "(?i)overloaded|server_error|service unavailable", "kind": "overloaded" },
+    { "pattern": "(?i)context window|context_length_exceeded", "kind": "context_overflow" },
+    {
+      "pattern": "(?i)model is not supported|model metadata for .* not found|model [^\\n]*does not exist",
+      "kind": "model_not_found",
+    },
+  ],
+}

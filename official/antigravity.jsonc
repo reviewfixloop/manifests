@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "antigravity",
+  "display": {
+    "name": "Google Antigravity",
+    "homepage": "https://antigravity.google/docs",
+    "usageLimitsUrl": "https://antigravity.google/docs/plans",
+  },
+  // The ACP server Google distributes for other vendors' editors, installed by the user from
+  // the ACP registry. It keeps its own settings (~/.gemini/antigravity-acp/settings.json), in
+  // which the user chooses how it signs in; the host never calls `authenticate`.
+  "command": "agy_acp_server.par",
+  "transport": {
+    "type": "acp",
+    "args": [],
+    // The ACP registry's entry for this server launches it on Linux with `--uid=`, empty as here.
+    "platformArgs": { "linux": ["--uid="] },
+    "native": false,
+  },
+  "failures": [
+    {
+      "pattern": "(?i)authentication required|no authentication method selected|environment variable is not set",
+      "kind": "authentication",
+    },
+    { "pattern": "(?i)quota|resource_exhausted", "kind": "quota" },
+    { "pattern": "(?i)rate limit", "kind": "rate_limit" },
+    { "pattern": "(?i)overloaded|unavailable", "kind": "overloaded" },
+    { "pattern": "(?i)is not recognized|invalid model", "kind": "model_not_found" },
+  ],
+}

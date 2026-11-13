@@ -1,0 +1,42 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "dc8ec18b-794d-4132-a3c5-75c701b9182d",
+      "model": "claude-opus-5-5",
+      "harness": {
+        "name": "claude-code",
+        "version": "2.1.300"
+      }
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "You've hit your weekly limit · resets Oct 18 at 11am (Asia/Tokyo)"
+    },
+    {
+      "type": "usage",
+      "key": "report-1",
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "reasoning": 0
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "api_error",
+      "text": "You've hit your weekly limit · resets Oct 18 at 11am (Asia/Tokyo)",
+      "usageComplete": true,
+      "status": "failed",
+      "failure": {
+        "kind": "quota",
+        "message": "You've hit your weekly limit · resets Oct 18 at 11am (Asia/Tokyo)"
+      }
+    }
+  ]
+]

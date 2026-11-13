@@ -1,0 +1,18 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "ses_f079abfddffeGOR0V4wEC7XNT4"
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "UnknownError",
+      "usageComplete": false,
+      "status": "failed",
+      "failure": {
+        "kind": "unknown",
+        "message": "Unexpected server error. Check server logs for details."
+      }
+    }
+  ]
+]

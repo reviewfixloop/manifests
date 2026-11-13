@@ -1,0 +1,36 @@
+name: Register
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - official/**
+permissions:
+  contents: read
+  # The service accepts a registration only from this repository's main branch, proven by the run's OIDC token.
+  id-token: write
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+env:
+  SERVICE_URL: https://reviewfixloop.com
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - name: Register every official manifest
+        run: |
+          token=$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SERVICE_URL" | jq --raw-output .value)
+          for file in official/*.jsonc; do
+            # The service fetches the file itself, at the commit the token names; an unchanged manifest registers as the same hash.
+            curl --fail-with-body --silent --show-error -X POST "$SERVICE_URL/api/registry/official" \
+              -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+              --data "$(jq --null-input --arg path "$file" '{path: $path}')"
+            echo
+          done

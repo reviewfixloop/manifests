@@ -1,0 +1,96 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "7aced1f1-68ce-4228-b7c0-1cf9eea418d0",
+      "model": "claude-haiku-4-5-20251001",
+      "harness": {
+        "name": "claude-code",
+        "version": "2.1.286"
+      }
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "Bash"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "Read"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "The `add` function is incorrect—it subtracts instead of adds (should be `a + b` not `a - b`)."
+    },
+    {
+      "type": "usage",
+      "key": "report-1",
+      "input": 18,
+      "output": 318,
+      "cacheRead": 34710,
+      "cacheWrite": 5409,
+      "reasoning": 104
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "completed",
+      "text": "The `add` function is incorrect—it subtracts instead of adds (should be `a + b` not `a - b`).",
+      "usageComplete": true,
+      "status": "completed"
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "id": "7aced1f1-68ce-4228-b7c0-1cf9eea418d0",
+      "model": "claude-haiku-4-5-20251001",
+      "harness": {
+        "name": "claude-code",
+        "version": "2.1.286"
+      }
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "add.ts"
+    },
+    {
+      "type": "usage",
+      "key": "report-2",
+      "input": 10,
+      "output": 120,
+      "cacheRead": 20240,
+      "cacheWrite": 195,
+      "reasoning": 112
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "completed",
+      "text": "add.ts",
+      "usageComplete": true,
+      "status": "completed"
+    }
+  ]
+]

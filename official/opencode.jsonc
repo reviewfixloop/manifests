@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "id": "opencode",
+  "display": { "name": "OpenCode", "homepage": "https://opencode.ai/docs" },
+  "command": "opencode",
+  "version": { "args": ["--version"], "pattern": "(\\d+\\.\\d+\\.\\d+)" },
+  // No default model: OpenCode runs whichever provider the user configured.
+  "transport": {
+    "type": "jsonl",
+    "args": [
+      "run",
+      "--format",
+      "json",
+      "--auto",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--variant", "{{effort}}"] },
+    ],
+    "resumeArgs": [
+      "run",
+      "--format",
+      "json",
+      "--auto",
+      "--session",
+      "{{sessionId}}",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--variant", "{{effort}}"] },
+    ],
+    "stdin": "{{prompt}}",
+    // Each finished model step reports its own tokens, with reasoning apart from the output.
+    "usage": { "mode": "delta", "outputIncludesReasoning": false },
+    "events": [
+      { "match": { "/type": "step_start" }, "emit": { "type": "session", "id": { "from": "/sessionID" } } },
+      { "match": { "/type": "step_start" }, "emit": { "type": "progress", "kind": "model_call" } },
+      {
+        "match": { "/type": "text" },
+        "emit": { "type": "progress", "kind": "message", "text": { "from": "/part/text" } },
+      },
+      // Only finished tool calls are reported.
+      {
+        "match": { "/type": "tool_use" },
+        "emit": { "type": "progress", "kind": "tool_start", "text": { "from": "/part/tool" } },
+      },
+      { "match": { "/type": "tool_use" }, "emit": { "type": "progress", "kind": "tool_end" } },
+      {
+        "match": { "/type": "step_finish" },
+        "emit": {
+          "type": "usage",
+          "key": { "from": "/part/id" },
+          "input": { "from": "/part/tokens/input" },
+          "output": { "from": "/part/tokens/output" },
+          "cacheRead": { "from": "/part/tokens/cache/read" },
+          "cacheWrite": { "from": "/part/tokens/cache/write" },
+          "reasoning": { "from": "/part/tokens/reasoning" },
+          "costUsd": { "from": "/part/cost" },
+        },
+      },
+      // A run that fails before its first step names its session on the failure line alone.
+      { "match": { "/type": "error" }, "emit": { "type": "session", "id": { "from": "/sessionID" } } },
+      {
+        "match": { "/type": "error" },
+        "emit": {
+          "type": "turn_end",
+          "status": "failed",
+          "stopReason": { "from": "/error/name" },
+          "failureMessage": { "from": "/error/data/message" },
+          "failureKind": {
+            "from": "/error/data/statusCode",
+            "map": {
+              "401": "authentication",
+              "403": "authentication",
+              "404": "model_not_found",
+              "410": "model_not_found",
+              "429": "rate_limit",
+              "529": "overloaded",
+            },
+          },
+          "usageComplete": false,
+        },
+      },
+    ],
+  },
+  "failures": [
+    { "pattern": "(?i)unauthorized|invalid api key|auth login", "kind": "authentication" },
+    { "pattern": "(?i)quota|insufficient|billing", "kind": "quota" },
+    { "pattern": "(?i)rate limit", "kind": "rate_limit" },
+    { "pattern": "(?i)overloaded", "kind": "overloaded" },
+    { "pattern": "(?i)context (window|length)|too many tokens", "kind": "context_overflow" },
+    { "pattern": "(?i)was retired|model not found|unknown model", "kind": "model_not_found" },
+  ],
+}

@@ -1,0 +1,42 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "7d1fbf51-1d3c-453b-961d-ecef6273f3c4",
+      "model": "not-a-model",
+      "harness": {
+        "name": "claude-code",
+        "version": "2.1.286"
+      }
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "There's an issue with the selected model (not-a-model). It may not exist or you may not have access to it. Run --model to pick a different model."
+    },
+    {
+      "type": "usage",
+      "key": "report-1",
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "reasoning": 0
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "api_error",
+      "text": "There's an issue with the selected model (not-a-model). It may not exist or you may not have access to it. Run --model to pick a different model.",
+      "usageComplete": true,
+      "status": "failed",
+      "failure": {
+        "kind": "model_not_found",
+        "message": "There's an issue with the selected model (not-a-model). It may not exist or you may not have access to it. Run --model to pick a different model."
+      }
+    }
+  ]
+]
