@@ -1,0 +1,33 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "688231e4-8df1-404e-a2f8-797d5e5c21d3",
+      "model": "claude-opus-5-5",
+      "harness": {
+        "name": "claude-code",
+        "version": "2.1.312"
+      }
+    },
+    {
+      "type": "usage",
+      "key": "report-1",
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "reasoning": 0
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "api_error",
+      "text": "Not logged in · Please run /login",
+      "usageComplete": true,
+      "status": "failed",
+      "failure": {
+        "kind": "authentication",
+        "message": "Not logged in · Please run /login"
+      }
+    }
+  ]
+]

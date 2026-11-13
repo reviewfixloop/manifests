@@ -10,15 +10,6 @@
       }
     },
     {
-      "type": "progress",
-      "kind": "model_call"
-    },
-    {
-      "type": "progress",
-      "kind": "message",
-      "text": "Prompt is too long · the request is ~481833 tokens (limit 200000) but this conversation is only ~178588 tokens — the rest is system prompt, tool definitions, and attachment content. A single-exchange conversation cannot be compacted; reduce attached files/tools or start with less context."
-    },
-    {
       "type": "usage",
       "key": "report-1",
       "input": 0,

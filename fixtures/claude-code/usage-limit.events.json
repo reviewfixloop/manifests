@@ -10,15 +10,6 @@
       }
     },
     {
-      "type": "progress",
-      "kind": "model_call"
-    },
-    {
-      "type": "progress",
-      "kind": "message",
-      "text": "You've hit your weekly limit · resets Oct 18 at 11am (Asia/Tokyo)"
-    },
-    {
       "type": "usage",
       "key": "report-1",
       "input": 0,

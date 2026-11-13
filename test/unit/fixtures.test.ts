@@ -1,6 +1,5 @@
-import fs from 'node:fs';
-
 import { describe, expect, it } from 'bun:test';
+import fs from 'node:fs';
 
 import { listFixtures, mapFixture } from '../../scripts/fixtures.ts';
 
