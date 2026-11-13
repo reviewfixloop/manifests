@@ -9,10 +9,10 @@
   "command": "codex",
   "version": { "args": ["--version"], "pattern": "(\\d+\\.\\d+\\.\\d+)" },
   "models": {
-    "default": "gpt-6.1-sol",
+    "default": "gpt-6.1-terra",
     // The levels Codex's model catalog lists for the default model.
     "efforts": ["low", "medium", "high", "xhigh", "max", "ultra"],
-    "defaultEffort": "medium",
+    "defaultEffort": "high",
   },
   "transport": {
     "type": "jsonl",
