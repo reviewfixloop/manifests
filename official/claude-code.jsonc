@@ -132,4 +132,12 @@
     { "pattern": "(?i)prompt is too long|context (window|length)", "kind": "context_overflow" },
     { "pattern": "(?i)issue with the selected model|model_not_found", "kind": "model_not_found" },
   ],
+  // In a sandbox the harness has neither the user's ~/.claude nor the macOS keychain: it signs in
+  // with a key or a long-lived token (`claude setup-token`) from the user's environment. Its
+  // temporary files otherwise go to a directory shared by every Claude Code process.
+  "sandbox": {
+    "signInEnv": ["CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY"],
+    "setEnv": { "CLAUDE_CODE_TMPDIR": "{{tmpDir}}", "DISABLE_AUTOUPDATER": "1" },
+    "domains": ["api.anthropic.com"],
+  },
 }

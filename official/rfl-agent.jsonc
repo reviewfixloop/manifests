@@ -15,4 +15,17 @@
   // The host deletes its scratch directory with the session; the agent keeps whole command
   // outputs and archived conversations there.
   "transport": { "type": "acp", "args": ["--scratch-dir", "{{scratchDir}}"], "native": true },
+  // In a sandbox the agent reads no configuration of the user's: the CLI resolves the `custom`
+  // provider's endpoint and key outside it and passes them as RFL_AGENT_CUSTOM_BASE_URL and
+  // RFL_AGENT_CUSTOM_API_KEY, and allows the endpoint's host.
+  "sandbox": {
+    "passEnv": [
+      "OPENROUTER_API_KEY",
+      "AI_GATEWAY_API_KEY",
+      "OLLAMA_API_KEY",
+      "RFL_AGENT_CUSTOM_BASE_URL",
+      "RFL_AGENT_CUSTOM_API_KEY",
+    ],
+    "domains": ["openrouter.ai", "ai-gateway.vercel.sh", "ollama.com"],
+  },
 }
