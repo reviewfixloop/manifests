@@ -1,0 +1,112 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "ses_f079b2812ffeTPIinA7FIfpmyZ"
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "I'll check the directory and read the file."
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "glob"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "bash"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "usage",
+      "key": "prt_0f86500c3001FdmiXxAwmDPoxJ",
+      "input": 36092,
+      "output": 60,
+      "cacheRead": 1941,
+      "cacheWrite": 0,
+      "reasoning": 0,
+      "costUsd": 0
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "read"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "usage",
+      "key": "prt_0f8650b59001D8u4etzfVdCu4V",
+      "input": 249,
+      "output": 80,
+      "cacheRead": 38033,
+      "cacheWrite": 0,
+      "reasoning": 0,
+      "costUsd": 0
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "`add.ts` is not correct — it subtracts `b` from `a` instead of adding (`a - b` should be `a + b`)."
+    },
+    {
+      "type": "usage",
+      "key": "prt_0f86519600018108WQqX72Grzx",
+      "input": 194,
+      "output": 35,
+      "cacheRead": 38282,
+      "cacheWrite": 0,
+      "reasoning": 0,
+      "costUsd": 0
+    }
+  ],
+  [
+    {
+      "type": "session",
+      "id": "ses_f079b2812ffeTPIinA7FIfpmyZ"
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "add.ts"
+    },
+    {
+      "type": "usage",
+      "key": "prt_0f8653bdf001dZand83EQZDehN",
+      "input": 36997,
+      "output": 3,
+      "cacheRead": 1939,
+      "cacheWrite": 0,
+      "reasoning": 0,
+      "costUsd": 0
+    }
+  ]
+]

@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "id": "claude-code",
+  "display": {
+    "name": "Claude Code",
+    "homepage": "https://code.claude.com/docs",
+    "usageLimitsUrl": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+  },
+  "command": "claude",
+  "version": { "args": ["--version"], "pattern": "(\\d+\\.\\d+\\.\\d+)" },
+  "models": {
+    "default": "claude-opus-5-5",
+    "efforts": ["low", "medium", "high", "xhigh", "max"],
+    "defaultEffort": "medium",
+  },
+  "transport": {
+    "type": "jsonl",
+    // The prompt arrives as the user message on standard input and the system prompt stays
+    // Claude Code's own: an appended system prompt makes the server bill the request as a
+    // third-party app.
+    "args": [
+      "--print",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--effort", "{{effort}}"] },
+    ],
+    "resumeArgs": [
+      "--print",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions",
+      "--resume",
+      "{{sessionId}}",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--effort", "{{effort}}"] },
+    ],
+    "stdin": "{{prompt}}",
+    // The result line reports the tokens of this process's turn alone.
+    "usage": { "mode": "delta" },
+    "events": [
+      {
+        "match": { "/type": "system", "/subtype": "init" },
+        "emit": {
+          "type": "session",
+          "id": { "from": "/session_id" },
+          "model": { "from": "/model" },
+          "harnessVersion": { "from": "/claude_code_version" },
+        },
+      },
+      {
+        // One model response spans several lines that share its message id.
+        "match": { "/type": "assistant" },
+        "emit": { "type": "progress", "kind": "model_call", "key": { "from": "/message/id" } },
+      },
+      {
+        "match": { "/type": "assistant" },
+        "each": "/message/content",
+        "itemMatch": { "/type": "text" },
+        "emit": { "type": "progress", "kind": "message", "text": { "fromItem": "/text" } },
+      },
+      {
+        "match": { "/type": "assistant" },
+        "each": "/message/content",
+        "itemMatch": { "/type": "tool_use" },
+        "emit": { "type": "progress", "kind": "tool_start", "text": { "fromItem": "/name" } },
+      },
+      {
+        "match": { "/type": "user" },
+        "each": "/message/content",
+        "itemMatch": { "/type": "tool_result" },
+        "emit": { "type": "progress", "kind": "tool_end" },
+      },
+      {
+        "match": { "/type": "result" },
+        "emit": {
+          "type": "usage",
+          "input": { "from": "/usage/input_tokens" },
+          "output": { "from": "/usage/output_tokens" },
+          "cacheRead": { "from": "/usage/cache_read_input_tokens" },
+          "cacheWrite": { "from": "/usage/cache_creation_input_tokens" },
+          "reasoning": { "from": "/usage/output_tokens_details/thinking_tokens" },
+          // `total_cost_usd` is left out: a resumed session reports the session's running cost
+          // beside this turn's tokens.
+        },
+      },
+      {
+        // A failed turn keeps the subtype "success"; `is_error` tells.
+        "match": { "/type": "result" },
+        "emit": {
+          "type": "turn_end",
+          "status": { "from": "/is_error", "map": { "false": "completed", "true": "failed" } },
+          "stopReason": { "from": "/terminal_reason" },
+          "text": { "from": "/result" },
+          "failureMessage": { "from": "/result" },
+          "failureKind": {
+            "from": "/api_error_status",
+            "map": {
+              "401": "authentication",
+              "403": "authentication",
+              "404": "model_not_found",
+              // 429 is left to the patterns: a plan's usage limit ("You've hit your weekly
+              // limit") answers 429 as a rate limit does, and only its message tells them apart.
+              "529": "overloaded",
+            },
+          },
+        },
+      },
+    ],
+  },
+  "failures": [
+    { "pattern": "(?i)third-party apps now draw from your extra usage", "kind": "quota" },
+    {
+      "pattern": "(?i)usage limit|out of (extra )?usage|credit balance is too low|you've hit your [^\\n]*limit",
+      "kind": "quota",
+    },
+    {
+      "pattern": "(?i)invalid api key|not logged in|please run /login|authentication_failed|oauth token",
+      "kind": "authentication",
+    },
+    { "pattern": "(?i)rate limit", "kind": "rate_limit" },
+    { "pattern": "(?i)overloaded", "kind": "overloaded" },
+    { "pattern": "(?i)prompt is too long|context (window|length)", "kind": "context_overflow" },
+    { "pattern": "(?i)issue with the selected model|model_not_found", "kind": "model_not_found" },
+  ],
+}

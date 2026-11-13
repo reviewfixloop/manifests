@@ -1,0 +1,24 @@
+{
+  "name": "manifests",
+  "private": true,
+  "description": "Official Reviewer Protocol manifests and the recordings that verify them",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reviewfixloop/manifests.git"
+  },
+  "license": "Apache-2.0",
+  "author": "WillBooster Inc.",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "reviewer-protocol": "^1.0.0-beta.0"
+  },
+  "devDependencies": {
+    "@tsconfig/bun": "1.0.11",
+    "@types/bun": "1.4.4",
+    "typescript": "7.0.2"
+  }
+}

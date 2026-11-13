@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "id": "copilot",
+  "display": {
+    "name": "GitHub Copilot CLI",
+    "homepage": "https://docs.github.com/copilot/how-tos/use-copilot-agents/use-copilot-cli",
+    "usageLimitsUrl": "https://docs.github.com/copilot/concepts/billing/copilot-requests",
+  },
+  "command": "copilot",
+  "version": { "args": ["--version"], "pattern": "(\\d+\\.\\d+\\.\\d+)" },
+  // No default model: the models a user may run depend on their plan.
+  "transport": {
+    "type": "jsonl",
+    "args": [
+      "--output-format",
+      "json",
+      "--no-auto-update",
+      "--no-ask-user",
+      "--allow-all",
+      "--usage-output-file",
+      "{{scratchDir}}/copilot-usage.json",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--reasoning-effort", "{{effort}}"] },
+      "--prompt",
+      "{{prompt}}",
+    ],
+    "resumeArgs": [
+      "--output-format",
+      "json",
+      "--no-auto-update",
+      "--no-ask-user",
+      "--allow-all",
+      "--usage-output-file",
+      "{{scratchDir}}/copilot-usage.json",
+      "--resume={{sessionId}}",
+      { "when": "model", "args": ["--model", "{{model}}"] },
+      { "when": "effort", "args": ["--reasoning-effort", "{{effort}}"] },
+      "--prompt",
+      "{{prompt}}",
+    ],
+    // The stream carries no token counts; the usage file holds the session's running totals, in a
+    // process that resumes the session too.
+    "usage": { "mode": "cumulative" },
+    "usageFile": {
+      "path": "{{scratchDir}}/copilot-usage.json",
+      "emit": {
+        "type": "usage",
+        "model": { "from": "/currentModel" },
+        "input": { "from": "/tokenDetails/input/tokenCount" },
+        "output": { "from": "/tokenDetails/output/tokenCount" },
+        "cacheRead": { "from": "/tokenDetails/cache_read/tokenCount" },
+        "cacheWrite": { "from": "/tokenDetails/cache_write/tokenCount" },
+      },
+    },
+    "events": [
+      { "match": { "/type": "model.call_start" }, "emit": { "type": "progress", "kind": "model_call" } },
+      {
+        "match": { "/type": "assistant.message" },
+        "emit": { "type": "progress", "kind": "message", "text": { "from": "/data/content" } },
+      },
+      {
+        "match": { "/type": "assistant.reasoning" },
+        "emit": { "type": "progress", "kind": "thought", "text": { "from": "/data/content" } },
+      },
+      {
+        "match": { "/type": "tool.execution_start" },
+        "emit": { "type": "progress", "kind": "tool_start", "text": { "from": "/data/toolName" } },
+      },
+      { "match": { "/type": "tool.execution_complete" }, "emit": { "type": "progress", "kind": "tool_end" } },
+      // The session id arrives only with the final line.
+      { "match": { "/type": "result" }, "emit": { "type": "session", "id": { "from": "/sessionId" } } },
+      {
+        "match": { "/type": "result" },
+        "emit": {
+          "type": "turn_end",
+          "status": { "from": "/exitCode", "map": { "0": "completed" }, "default": "failed" },
+        },
+      },
+    ],
+  },
+  // A start-up failure (an unavailable model, an unsupported effort) is reported on standard error alone.
+  "failures": [
+    { "pattern": "(?i)not logged in|copilot login|authentication|unauthorized", "kind": "authentication" },
+    { "pattern": "(?i)premium requests?.*(exhausted|exceeded|limit)|quota", "kind": "quota" },
+    { "pattern": "(?i)rate limit", "kind": "rate_limit" },
+    { "pattern": "(?i)is not available|does not support reasoning effort", "kind": "model_not_found" },
+  ],
+}

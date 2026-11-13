@@ -1,0 +1,97 @@
+{
+  "totalPremiumRequestCost": 2,
+  "totalUserRequests": 1,
+  "totalNanoAiu": 454928000,
+  "tokenDetails": {
+    "input": {
+      "tokenCount": 20408
+    },
+    "cache_read": {
+      "tokenCount": 13184
+    },
+    "cache_write": {
+      "tokenCount": 0
+    },
+    "output": {
+      "tokenCount": 170
+    }
+  },
+  "totalApiDurationMs": 16164,
+  "sessionStartTime": "2026-10-01T17:09:30.030Z",
+  "codeChanges": {
+    "linesAdded": 0,
+    "linesRemoved": 0,
+    "filesModifiedCount": 0,
+    "filesModified": []
+  },
+  "modelMetrics": {
+    "mai-code-1.1-flash": {
+      "requests": {
+        "count": 3,
+        "cost": 2
+      },
+      "usage": {
+        "inputTokens": 33592,
+        "outputTokens": 170,
+        "cacheReadTokens": 13184,
+        "cacheWriteTokens": 0,
+        "reasoningTokens": 0
+      },
+      "cacheExpiresAt": "2026-10-01T17:40:28.429Z",
+      "totalNanoAiu": 454928000,
+      "tokenDetails": {
+        "input": {
+          "tokenCount": 20408
+        },
+        "cache_read": {
+          "tokenCount": 13184
+        },
+        "cache_write": {
+          "tokenCount": 0
+        },
+        "output": {
+          "tokenCount": 170
+        }
+      }
+    }
+  },
+  "agentMetrics": {
+    "main": {
+      "totalApiDurationMs": 16164,
+      "totalNanoAiu": 454928000,
+      "modelMetrics": {
+        "mai-code-1.1-flash": {
+          "requests": {
+            "count": 3,
+            "cost": 2
+          },
+          "usage": {
+            "inputTokens": 33592,
+            "outputTokens": 170,
+            "cacheReadTokens": 13184,
+            "cacheWriteTokens": 0,
+            "reasoningTokens": 0
+          },
+          "totalNanoAiu": 454928000,
+          "tokenDetails": {
+            "input": {
+              "tokenCount": 20408
+            },
+            "cache_read": {
+              "tokenCount": 13184
+            },
+            "cache_write": {
+              "tokenCount": 0
+            },
+            "output": {
+              "tokenCount": 170
+            }
+          }
+        }
+      }
+    }
+  },
+  "currentModel": "mai-code-1.1-flash",
+  "lastCallInputTokens": 11342,
+  "lastCallOutputTokens": 6
+}

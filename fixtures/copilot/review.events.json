@@ -1,0 +1,82 @@
+[
+  [
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "bash"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_start",
+      "text": "view"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "progress",
+      "kind": "tool_end"
+    },
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "No—`add` is incorrect because it subtracts `b` from `a` instead of adding them, so it should be `a + b`."
+    },
+    {
+      "type": "session",
+      "id": "010813d9-f6be-4504-9b68-216ab1e0859b"
+    },
+    {
+      "type": "usage",
+      "key": "report-1",
+      "model": "mai-code-1.1-flash",
+      "input": 11370,
+      "output": 164,
+      "cacheRead": 10880,
+      "cacheWrite": 0
+    },
+    {
+      "type": "turn_end",
+      "usageComplete": true,
+      "status": "completed"
+    }
+  ],
+  [
+    {
+      "type": "progress",
+      "kind": "model_call"
+    },
+    {
+      "type": "progress",
+      "kind": "message",
+      "text": "add.ts"
+    },
+    {
+      "type": "session",
+      "id": "010813d9-f6be-4504-9b68-216ab1e0859b"
+    },
+    {
+      "type": "usage",
+      "key": "report-2",
+      "model": "mai-code-1.1-flash",
+      "input": 9038,
+      "output": 6,
+      "cacheRead": 2304,
+      "cacheWrite": 0
+    },
+    {
+      "type": "turn_end",
+      "usageComplete": true,
+      "status": "completed"
+    }
+  ]
+]
