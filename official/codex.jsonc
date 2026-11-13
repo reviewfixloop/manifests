@@ -106,4 +106,10 @@
       "kind": "model_not_found",
     },
   ],
+  // In a sandbox the harness has no ~/.codex, so no ChatGPT sign-in: it signs in with an API key
+  // from the user's environment.
+  "sandbox": {
+    "signInEnv": ["CODEX_API_KEY"],
+    "domains": ["api.openai.com"],
+  },
 }
