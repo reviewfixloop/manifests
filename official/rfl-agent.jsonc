@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "id": "rfl-agent",
+  "display": {
+    "name": "ReviewFixLoop Agent",
+    "description": "Reviews with a model served by OpenRouter, Vercel AI Gateway, Ollama Cloud, or another OpenAI-compatible endpoint",
+  },
+  // Embedded in the review-fix-loop CLI. The model names its provider, as
+  // `<openrouter|vercel|ollama|custom>/<the provider's model id>`, and the agent reads the
+  // provider's API key from the variable the provider documents (OPENROUTER_API_KEY,
+  // AI_GATEWAY_API_KEY, OLLAMA_API_KEY); `custom` sends to RFL_AGENT_CUSTOM_BASE_URL, or to
+  // the endpoint the CLI's configuration sets.
+  "command": "rfl-agent",
+  "models": { "efforts": ["none", "minimal", "low", "medium", "high", "xhigh", "max"] },
+  // The host deletes its scratch directory with the session; the agent keeps whole command
+  // outputs and archived conversations there.
+  "transport": { "type": "acp", "args": ["--scratch-dir", "{{scratchDir}}"], "native": true },
+}

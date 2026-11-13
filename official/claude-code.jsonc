@@ -54,12 +54,16 @@
         },
       },
       {
-        // One model response spans several lines that share its message id.
+        // One model response spans several lines that share its message id. A "<synthetic>"
+        // message is Claude Code's own report of a request that failed (not logged in, an
+        // invalid key, an unknown model, no network) with zero tokens: no model answered it.
         "match": { "/type": "assistant" },
+        "unless": { "/message/model": "<synthetic>" },
         "emit": { "type": "progress", "kind": "model_call", "key": { "from": "/message/id" } },
       },
       {
         "match": { "/type": "assistant" },
+        "unless": { "/message/model": "<synthetic>" },
         "each": "/message/content",
         "itemMatch": { "/type": "text" },
         "emit": { "type": "progress", "kind": "message", "text": { "fromItem": "/text" } },

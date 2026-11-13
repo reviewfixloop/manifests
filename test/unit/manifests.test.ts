@@ -1,7 +1,7 @@
+import { describe, expect, it } from 'bun:test';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { describe, expect, it } from 'bun:test';
 import { parseManifest } from 'reviewer-protocol';
 
 const OFFICIAL_DIR = path.join(import.meta.dir, '..', '..', 'official');
