@@ -1,0 +1,18 @@
+[
+  [
+    {
+      "type": "session",
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    {
+      "type": "turn_end",
+      "stopReason": "query",
+      "usageComplete": false,
+      "status": "failed",
+      "failure": {
+        "kind": "model_not_found",
+        "message": "Execution failed: Model \"rfl-probe-unknown-model\" is not available."
+      }
+    }
+  ]
+]

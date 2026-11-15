@@ -70,15 +70,20 @@
       // The session id arrives only with the final line.
       { "match": { "/type": "result" }, "emit": { "type": "session", "id": { "from": "/sessionId" } } },
       {
-        "match": { "/type": "result" },
+        "match": { "/type": "session.error" },
         "emit": {
           "type": "turn_end",
-          "status": { "from": "/exitCode", "map": { "0": "completed" }, "default": "failed" },
+          "status": "failed",
+          "stopReason": { "from": "/data/errorType" },
+          "failureMessage": { "from": "/data/message" },
         },
+      },
+      {
+        "match": { "/type": "result", "/exitCode": 0 },
+        "emit": { "type": "turn_end", "status": "completed" },
       },
     ],
   },
-  // A start-up failure (an unavailable model, an unsupported effort) is reported on standard error alone.
   "failures": [
     { "pattern": "(?i)not logged in|copilot login|authentication|unauthorized", "kind": "authentication" },
     { "pattern": "(?i)premium requests?.*(exhausted|exceeded|limit)|quota", "kind": "quota" },

@@ -51,14 +51,15 @@ export function mapFixture(fixture: Fixture): ReviewerEvent[][] {
       .flatMap((line) => mapper.mapLine(line));
     const usagePath = recording.replace(/\.jsonl$/, '.usage.json');
     const usageEvents = mapper.mapUsageFile(fs.existsSync(usagePath) ? fs.readFileSync(usagePath, 'utf8') : undefined);
-    // A recording whose usage file is lost, or no longer holds what the manifest reads, would
-    // otherwise map to no usage and still pass; only a process that never reported a result (a
-    // start-up failure) has none.
-    if (transport.usageFile !== undefined && usageEvents.length > 0 && usageEvents[0]?.type !== 'usage') {
+    if (
+      transport.usageFile !== undefined &&
+      usageEvents.some((event) => event.type === 'turn_end' && event.status === 'completed') &&
+      usageEvents[0]?.type !== 'usage'
+    ) {
       throw new Error(
         fs.existsSync(usagePath)
           ? `${usagePath} holds none of the token counts the manifest's usageFile declares`
-          : `${recording} reports a result, so its usage file ${usagePath} must be recorded`
+          : `${recording} reports a completed turn, so its usage file ${usagePath} must be recorded`
       );
     }
     events.push(...usageEvents);
