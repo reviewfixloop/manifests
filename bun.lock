@@ -5,7 +5,7 @@
     "": {
       "name": "manifests",
       "dependencies": {
-        "reviewer-protocol": "^1.0.0-beta.0",
+        "reviewer-protocol": "^1.0.0",
       },
       "devDependencies": {
         "@tsconfig/bun": "1.0.11",
@@ -67,7 +67,7 @@
 
     "re2js": ["re2js@2.8.7", "", {}, "sha512-bRSL/vn3KAmlGfGNoVpcsBXLaVvl6AbuvMMWbz0m3vBj60nj+p2/biozfBUOSBP+5XTduF6mr6IO/ZVjmqqkVQ=="],
 
-    "reviewer-protocol": ["reviewer-protocol@1.0.0-beta.0", "", { "dependencies": { "jsonc-parser": "3.3.1", "re2js": "2.8.7", "zod": "4.6.7" } }, "sha512-DmrQQifz7kNYWbWW3s+vAC+BCYHb5YEfAWxOTkSEhk31bjwmldmoTH6/0uA5SYvkwZEDk9Hrzhl0V4yv4TUqNw=="],
+    "reviewer-protocol": ["reviewer-protocol@1.0.0", "", { "dependencies": { "jsonc-parser": "3.3.1", "re2js": "2.8.7", "zod": "4.6.7" } }, "sha512-55i9g2scvVZGKQP5q6LsO8dG3W5PMVT8dkH3ELoug1w/ms1gXjSBtZ2c7p0Lif9afEbLuASXJgOqK8az1gbqVQ=="],
 
     "typescript": ["typescript@7.0.2", "", { "optionalDependencies": { "@typescript/typescript-aix-ppc64": "7.0.2", "@typescript/typescript-darwin-arm64": "7.0.2", "@typescript/typescript-darwin-x64": "7.0.2", "@typescript/typescript-freebsd-arm64": "7.0.2", "@typescript/typescript-freebsd-x64": "7.0.2", "@typescript/typescript-linux-arm": "7.0.2", "@typescript/typescript-linux-arm64": "7.0.2", "@typescript/typescript-linux-loong64": "7.0.2", "@typescript/typescript-linux-mips64el": "7.0.2", "@typescript/typescript-linux-ppc64": "7.0.2", "@typescript/typescript-linux-riscv64": "7.0.2", "@typescript/typescript-linux-s390x": "7.0.2", "@typescript/typescript-linux-x64": "7.0.2", "@typescript/typescript-netbsd-arm64": "7.0.2", "@typescript/typescript-netbsd-x64": "7.0.2", "@typescript/typescript-openbsd-arm64": "7.0.2", "@typescript/typescript-openbsd-x64": "7.0.2", "@typescript/typescript-sunos-x64": "7.0.2", "@typescript/typescript-win32-arm64": "7.0.2", "@typescript/typescript-win32-x64": "7.0.2" }, "bin": { "tsc": "bin/tsc" } }, "sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA=="],
 
