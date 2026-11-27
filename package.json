@@ -33,9 +33,6 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "reviewer-protocol": "^1.0.0"
-  },
   "devDependencies": {
     "@tsconfig/bun": "1.0.11",
     "@types/bun": "1.4.4",
@@ -44,6 +41,7 @@
     "oxfmt": "0.73.0",
     "oxlint": "1.88.0",
     "oxlint-tsgolint": "7.0.2004",
+    "reviewer-protocol": "^1.0.0",
     "semantic-release": "25.0.9",
     "typescript": "7.0.2"
   }
