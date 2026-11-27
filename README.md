@@ -40,9 +40,9 @@ A rule, a map entry, a default or a pattern is verified only when a recording re
 
 The recordings do not cover: visible reasoning (`thought`), every other failure (the remaining status-map entries, defaults and `failures` patterns), and the ACP manifests (`antigravity` and `opencode`), which have no output mapping. `rfl-agent` also speaks ACP; the CLI's tests run it against a fake provider instead.
 
-## Checks, registration, and publishing
+## Checks, publishing, and registration
 
-`bun run lint`, `bun run typecheck`, `bun run build`, and `bun test` lint and typecheck the repository, build `dist/`, validate every manifest against the schema of the `reviewer-protocol` package, and map the recordings. On `main`, `.github/workflows/publish.yml` runs those checks, registers every `official/*.jsonc` manifest with the ReviewFixLoop service using its GitHub Actions OIDC token (proving that it runs for this repository's `main` branch so the service fetches each manifest at that commit itself), and only then runs `semantic-release` to publish `@reviewfixloop/manifests` to npm. Runs whose reviewers use a registered manifest count on the public leaderboard.
+`bun run lint`, `bun run typecheck`, `bun run build`, and `bun test` lint and typecheck the repository, build `dist/`, validate every manifest against the schema of the `reviewer-protocol` package, and map the recordings. On `main`, `.github/workflows/publish.yml` runs those checks, runs `semantic-release` to publish `@reviewfixloop/manifests` to npm, and registers every `official/*.jsonc` manifest with the ReviewFixLoop service using its GitHub Actions OIDC token (proving that it runs for this repository's `main` branch so the service fetches each manifest at that commit itself). Runs whose reviewers use a registered manifest count on the public leaderboard.
 
 To connect a harness of your own, publish its manifest from your repository with `review-fix-loop manifest publish github:<owner>/<repo>/<path>@<sha>`; it is registered under your GitHub owner name and needs no change here.
 
