@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  # Recovers a failed publish or registration (e.g. after the service deploys a new manifest schema major); semantic-release no-ops on an already-tagged commit, whereas a push rerun keeps its old commit once main has moved.
+  # Recovers manifest registration (e.g. after the service deploys a new manifest schema major, while semantic-release no-ops on the already-tagged commit) or a pre-tag release failure once main has moved.
   workflow_dispatch:
 permissions:
   # semantic-release pushes the release tag and creates the GitHub release.
