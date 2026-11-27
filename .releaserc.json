@@ -7,7 +7,13 @@
     ],
     [
       "@semantic-release/release-notes-generator",
-      { "parserOpts": { "headerPattern": "^(\\w*)(?:\\((.*)\\))?!?: (.*)$" } }
+      {
+        "parserOpts": {
+          "headerPattern": "^(\\w*)(?:\\((.*)\\))?!?: (.*)$",
+          "breakingHeaderPattern": "^(\\w*)(?:\\((.*)\\))?!: (.*)$",
+          "noteKeywords": ["BREAKING CHANGE", "BREAKING-CHANGE"]
+        }
+      }
     ],
     "@semantic-release/npm",
     [
