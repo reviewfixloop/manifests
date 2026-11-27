@@ -28,7 +28,7 @@
   "scripts": {
     "build": "bun scripts/build.ts",
     "format": "oxfmt",
-    "lint": "oxlint --type-aware && oxfmt --check",
+    "lint": "oxlint --type-aware --deny-warnings && oxfmt --check",
     "prepublishOnly": "bun run build",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
