@@ -3,8 +3,13 @@ on:
   push:
     branches:
       - main
-  # Recovers manifest registration (e.g. after the service deploys a new manifest schema major, while semantic-release no-ops on the already-tagged commit) or a pre-tag release failure once main has moved.
+  # Recovers pre-tag failures (checks, OIDC manifest registration, or semantic-release verifyConditions/prepare) at the tip of main, or bootstraps a breaking MANIFEST_SCHEMA_VERSION major before the service deploys it (then re-runs without the input to register while semantic-release no-ops on the tagged commit).
   workflow_dispatch:
+    inputs:
+      publish_unregistered_schema_major:
+        description: 'Publish before the service deploys a new MANIFEST_SCHEMA_VERSION major; re-run without this after deploying to register'
+        type: boolean
+        default: false
 permissions:
   # semantic-release pushes the release tag and creates the GitHub release.
   contents: write
@@ -32,18 +37,20 @@ jobs:
       - run: bun run typecheck
       - run: bun run build
       - run: bun test
-      - run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Register every official manifest
+        if: ${{ !inputs.publish_unregistered_schema_major }}
         run: |
-          token=$(curl --fail --silent --show-error \
+          token=$(curl --fail --silent --show-error --retry 3 --retry-delay 2 \
             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SERVICE_URL" | jq --exit-status --raw-output .value)
           for file in official/*.jsonc; do
             # The service fetches the file itself, at the commit the token names; an unchanged manifest registers as the same hash.
-            curl --fail-with-body --silent --show-error -X POST "$SERVICE_URL/api/registry/official" \
+            curl --fail-with-body --silent --show-error --retry 3 --retry-delay 2 \
+              -X POST "$SERVICE_URL/api/registry/official" \
               -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
               --data "$(jq --null-input --arg path "$file" '{path: $path}')"
             echo
           done
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
