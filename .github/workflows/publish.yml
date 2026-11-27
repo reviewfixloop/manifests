@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  # Recovers a failed registration or publish at the tip of main; a rerun keeps its old commit, which semantic-release skips once main has moved.
+  # Recovers a failed publish or registration (e.g. after the service deploys a new manifest schema major); semantic-release no-ops on an already-tagged commit, whereas a push rerun keeps its old commit once main has moved.
   workflow_dispatch:
 permissions:
   # semantic-release pushes the release tag and creates the GitHub release.
@@ -32,6 +32,9 @@ jobs:
       - run: bun run typecheck
       - run: bun run build
       - run: bun test
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Register every official manifest
         run: |
           token=$(curl --fail --silent --show-error \
@@ -44,6 +47,3 @@ jobs:
               --data "$(jq --null-input --arg path "$file" '{path: $path}')"
             echo
           done
-      - run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
