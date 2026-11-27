@@ -1,15 +1,33 @@
 {
-  "name": "manifests",
-  "private": true,
+  "name": "@reviewfixloop/manifests",
+  "version": "0.0.0-semantically-released",
   "description": "Official Reviewer Protocol manifests and the recordings that verify them",
+  "license": "Apache-2.0",
+  "author": "WillBooster Inc.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reviewfixloop/manifests.git"
   },
-  "license": "Apache-2.0",
-  "author": "WillBooster Inc.",
+  "files": [
+    "dist",
+    "official"
+  ],
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
+    "build": "bun scripts/build.ts",
+    "format": "oxfmt",
+    "lint": "oxlint --type-aware && oxfmt --check",
+    "prepublishOnly": "bun run build",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
@@ -19,6 +37,12 @@
   "devDependencies": {
     "@tsconfig/bun": "1.0.11",
     "@types/bun": "1.4.4",
+    "@willbooster/oxlint-config": "1.4.9",
+    "conventional-changelog-conventionalcommits": "10.4.0",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
+    "oxlint-tsgolint": "7.0.2004",
+    "semantic-release": "25.0.9",
     "typescript": "7.0.2"
   }
 }

@@ -1,13 +1,14 @@
-name: Register
+name: Publish
 on:
   push:
     branches:
       - main
-    paths:
-      - official/**
+  # Recovers a failed registration or publish at the tip of main; a rerun keeps its old commit, which semantic-release skips once main has moved.
+  workflow_dispatch:
 permissions:
-  contents: read
-  # The service accepts a registration only from this repository's main branch, proven by the run's OIDC token.
+  # semantic-release pushes the release tag and creates the GitHub release.
+  contents: write
+  # Proves to the ReviewFixLoop service that registration runs on main, and authenticates npm trusted publishing.
   id-token: write
 concurrency:
   group: ${{ github.workflow }}
@@ -15,18 +16,27 @@ concurrency:
 env:
   SERVICE_URL: https://reviewfixloop.com
 jobs:
-  register:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          # semantic-release reads every commit since the last release tag.
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 26.13.1
       - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun run build
       - run: bun test
       - name: Register every official manifest
         run: |
           token=$(curl --fail --silent --show-error \
             -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SERVICE_URL" | jq --raw-output .value)
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$SERVICE_URL" | jq --exit-status --raw-output .value)
           for file in official/*.jsonc; do
             # The service fetches the file itself, at the commit the token names; an unchanged manifest registers as the same hash.
             curl --fail-with-body --silent --show-error -X POST "$SERVICE_URL/api/registry/official" \
@@ -34,3 +44,6 @@ jobs:
               --data "$(jq --null-input --arg path "$file" '{path: $path}')"
             echo
           done
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

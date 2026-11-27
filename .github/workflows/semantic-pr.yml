@@ -1,0 +1,64 @@
+name: Semantic PR
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+permissions: {}
+jobs:
+  semantic-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          node --input-type=module <<'EOF'
+          const title = process.env.PR_TITLE ?? '';
+          const allowedTypes = new Set([
+            'build',
+            'chore',
+            'ci',
+            'docs',
+            'feat',
+            'fix',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+          ]);
+
+          if (/[\r\n\x00-\x1f\x7f]/.test(title)) {
+            console.error(`PR title must be a single line without control characters: ${JSON.stringify(title)}`);
+            process.exit(1);
+          }
+
+          const match = /^([a-z]+)(?:\(([^()\r\n]+)\))?!?: (.+)$/.exec(title);
+          if (match === null) {
+            console.error(
+              `PR title must follow Conventional Commits ("<type>[optional scope]: <description>"): ${title}`,
+            );
+            process.exit(1);
+          }
+
+          const [, type = '', , subject = ''] = match;
+          if (!allowedTypes.has(type)) {
+            console.error(`Unsupported Conventional Commit type "${type}". Allowed: ${[...allowedTypes].join(', ')}`);
+            process.exit(1);
+          }
+
+          if (subject !== subject.trim()) {
+            console.error('PR title description must not have leading or trailing whitespace.');
+            process.exit(1);
+          }
+
+          if (!/[A-Za-z]/.test(subject) || !/^[\x20-\x7e–—‘’“”…→]+$/u.test(title)) {
+            console.error(`PR title must be written in English only: ${title}`);
+            process.exit(1);
+          }
+
+          console.log(`Valid PR title: ${title}`);
+          EOF

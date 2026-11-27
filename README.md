@@ -13,6 +13,14 @@ The [Reviewer Protocol](https://github.com/reviewfixloop/reviewer-protocol) mani
 
 Every manifest launches both reviewers and resolvers. The `opencode` manifest supports OpenCode V2 only.
 
+## Package
+
+Published on npm as `@reviewfixloop/manifests`. The package ships the raw `.jsonc` files under `official/` and exports `OFFICIAL_MANIFEST_TEXTS` (`readonly string[]`), the raw JSONC text of every file in `official/` sorted lexicographically by filename, for hosts that embed the official manifests.
+
+```ts
+import { OFFICIAL_MANIFEST_TEXTS } from '@reviewfixloop/manifests';
+```
+
 ## Fixtures
 
 `fixtures/<manifest id>/<name>.<n>.jsonl` is the recorded standard output of the n-th process of a real session, `<name>.<n>.stderr.txt` what it wrote to standard error (absent when nothing), `<name>.<n>.usage.json` the usage file it wrote (required when the manifest declares `usageFile` and the process reported a completed turn), and `<name>.events.json` the events the session must map to. The test suite maps every recording with the current manifest and compares.
@@ -32,9 +40,9 @@ A rule, a map entry, a default or a pattern is verified only when a recording re
 
 The recordings do not cover: visible reasoning (`thought`), every other failure (the remaining status-map entries, defaults and `failures` patterns), and the ACP manifests (`antigravity` and `opencode`), which have no output mapping. `rfl-agent` also speaks ACP; the CLI's tests run it against a fake provider instead.
 
-## Checks and registration
+## Checks, registration, and publishing
 
-`bun test` validates every manifest against the schema of the `reviewer-protocol` package and maps the recordings. A change merged into `main` under `official/` is registered with the ReviewFixLoop service by `.github/workflows/register.yml`, which proves with its GitHub Actions OIDC token that it runs for this repository's `main` branch; the service fetches the manifest at that commit itself. Runs whose reviewers use a registered manifest count on the public leaderboard.
+`bun run lint`, `bun run typecheck`, `bun run build`, and `bun test` lint and typecheck the repository, build `dist/`, validate every manifest against the schema of the `reviewer-protocol` package, and map the recordings. On `main`, `.github/workflows/publish.yml` runs those checks, registers every `official/*.jsonc` manifest with the ReviewFixLoop service using its GitHub Actions OIDC token (proving that it runs for this repository's `main` branch so the service fetches each manifest at that commit itself), and only then runs `semantic-release` to publish `@reviewfixloop/manifests` to npm. Runs whose reviewers use a registered manifest count on the public leaderboard.
 
 To connect a harness of your own, publish its manifest from your repository with `review-fix-loop manifest publish github:<owner>/<repo>/<path>@<sha>`; it is registered under your GitHub owner name and needs no change here.
 
